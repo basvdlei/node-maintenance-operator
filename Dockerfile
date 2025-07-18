@@ -1,11 +1,11 @@
 # Build the manager binary
-FROM quay.io/centos/centos:stream9 AS builder
+FROM quay.io/centos/centos:stream10 AS builder
 RUN dnf install git golang -y
 
-# Ensure go 1.16
-RUN go install golang.org/dl/go1.16@latest
-RUN ~/go/bin/go1.16 download
-RUN /bin/cp -f ~/go/bin/go1.16 /usr/bin/go
+# Ensure go 1.24.5
+RUN go install golang.org/dl/go1.24.5@latest
+RUN ~/go/bin/go1.24.5 download
+RUN /bin/cp -f ~/go/bin/go1.24.5 /usr/bin/go
 RUN go version
 
 WORKDIR /workspace
