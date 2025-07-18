@@ -93,7 +93,7 @@ SHELL = /usr/bin/env bash -o pipefail
 # --entrypoint /bin bash ... -c                                 = run bash -c on start; that means the actual command(s) need be wrapped in double quotes, see e.g. check target which will run: bash -c "make test"
 export DOCKER_GO=docker run --rm -v $$(pwd):/home/go/src/kubevirt.io/node-maintenance-operator \
 	-u $$(id -u) -w /home/go/src/kubevirt.io/node-maintenance-operator \
-	-e "GOPATH=/go" -e "GOFLAGS=-mod=vendor" -e "XDG_CACHE_HOME=/tmp/.cache" \
+	-e "GOPATH=/go" -e "XDG_CACHE_HOME=/tmp/.cache" \
 	-e "VERSION=$(VERSION)" -e "IMAGE_REGISTRY=$(IMAGE_REGISTRY)" \
 	--entrypoint /bin/bash docker.io/library/golang:$(GO_VERSION) -c
 
@@ -129,13 +129,10 @@ fmt: goimports ## Run go goimports against code.
 vet: ## Run go vet against code.
 	go vet ./api/... ./controllers/... ./test/...
 
-go-vendor:
-	go mod vendor
-
 go-tidy:
 	go mod tidy
 
-test: manifests generate fmt vet go-tidy go-vendor verify-unchanged envtest ginkgo ## Run tests.
+test: manifests generate fmt vet go-tidy verify-unchanged envtest ginkgo ## Run tests.
 	ACK_GINKGO_DEPRECATIONS=1.16.4 KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(PROJECT_DIR)/bin)" $(GINKGO) -v -r --keepGoing -requireSuite ./api/... ./controllers/... -coverprofile cover.out
 
 ##@ Build

@@ -17,7 +17,6 @@ COPY api/ api/
 COPY hack/ hack/
 COPY controllers/ controllers/
 COPY version/ version/
-COPY vendor/ vendor/
 
 # for getting version info
 COPY .git/ .git/

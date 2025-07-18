@@ -1,6 +1,6 @@
 module kubevirt.io/node-maintenance-operator
 
-go 1.16
+go 1.24
 
 require (
 	github.com/go-logr/logr v0.4.0
