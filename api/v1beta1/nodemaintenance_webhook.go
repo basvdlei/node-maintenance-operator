@@ -18,9 +18,8 @@ package v1beta1
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/policy/v1beta1"
@@ -30,7 +29,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 const (
@@ -66,38 +64,42 @@ type NodeMaintenanceValidator struct {
 var validator *NodeMaintenanceValidator
 
 func (r *NodeMaintenance) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	// init the validator!
-	validator = &NodeMaintenanceValidator{
-		client: mgr.GetClient(),
-	}
-
-	// check if OLM injected certs
-	certs := []string{filepath.Join(WebhookCertDir, WebhookCertName), filepath.Join(WebhookCertDir, WebhookKeyName)}
-	certsInjected := true
-	for _, fname := range certs {
-		if _, err := os.Stat(fname); err != nil {
-			certsInjected = false
-			break
+	return errors.New("nodemaintenance_webhook.SetupWebhookWithManager not implemented")
+	/*
+		// init the validator!
+		validator = &NodeMaintenanceValidator{
+			client: mgr.GetClient(),
 		}
-	}
-	if certsInjected {
-		server := mgr.GetWebhookServer()
-		server.CertDir = WebhookCertDir
-		server.CertName = WebhookCertName
-		server.KeyName = WebhookKeyName
-	} else {
-		nodemaintenancelog.Info("OLM injected certs for webhooks not found")
-	}
 
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
-		Complete()
+		// check if OLM injected certs
+		certs := []string{filepath.Join(WebhookCertDir, WebhookCertName), filepath.Join(WebhookCertDir, WebhookKeyName)}
+		certsInjected := true
+		for _, fname := range certs {
+			if _, err := os.Stat(fname); err != nil {
+				certsInjected = false
+				break
+			}
+		}
+		if certsInjected {
+			server := mgr.GetWebhookServer()
+			server.CertDir = WebhookCertDir
+			server.CertName = WebhookCertName
+			server.KeyName = WebhookKeyName
+		} else {
+			nodemaintenancelog.Info("OLM injected certs for webhooks not found")
+		}
+
+		return ctrl.NewWebhookManagedBy(mgr).
+			For(r).
+			Complete()
+	*/
+
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
 //+kubebuilder:webhook:path=/validate-nodemaintenance-kubevirt-io-v1beta1-nodemaintenance,mutating=false,failurePolicy=fail,sideEffects=None,groups=nodemaintenance.kubevirt.io,resources=nodemaintenances,verbs=create;update,versions=v1beta1,name=vnodemaintenance.kb.io,admissionReviewVersions={v1,v1beta1}
 
-var _ webhook.Validator = &NodeMaintenance{}
+//var _ webhook.Validator = &NodeMaintenance{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *NodeMaintenance) ValidateCreate() error {
